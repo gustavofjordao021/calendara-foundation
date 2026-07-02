@@ -1,3 +1,24 @@
+# WHITELIST MODE — everything ignored unless explicitly allowed below.
+/*
+
+# Root key files
+!/.gitignore
+!/CLAUDE.md
+!/hygge-chat-pencil-brief.md
+
+# Living knowledge base
+!/docs/
+!/brand/
+!/strategy/
+
+# …but not these inside them
+strategy/archive/
+strategy/growth/
+strategy/briefs/
+Geist_Mono,Inter,Manrope/
+
+# Never
+*.p8
+*.docx
 .DS_Store
-*.tmp
-Thumbs.db
+node_modules/

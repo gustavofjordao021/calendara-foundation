@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendara — Competitor Website Scan · July 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--coral:#C96442;--ink:#1C1C1E;--mut:#6B6863;--cream:#FFFBF7;--wash:#FBF5EE;--stroke:#EAD9CC;--sage:#5B8C3F;--blue:#4A90D9;--red:#B23A1E;--redbg:#FBE9E4;--greenbg:#EAF3E2;--amberbg:#FBF1DD;--amber:#8A6400;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Manrope,system-ui,sans-serif;background:var(--cream);color:var(--ink);padding:48px;max-width:1280px;margin:0 auto}
+  h1{font-size:34px;font-weight:800;letter-spacing:-1px}
+  .sub{color:var(--mut);font-size:15px;line-height:1.5;margin:10px 0 34px;max-width:900px}
+  h2{font-size:20px;font-weight:800;color:var(--coral);letter-spacing:1.5px;text-transform:uppercase;font-size:14px;margin:40px 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:18px}
+  .card{background:#fff;border:1.5px solid var(--stroke);border-radius:16px;padding:22px}
+  .card h3{font-size:19px;font-weight:800}
+  .card .kind{font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--mut);margin:2px 0 10px;text-transform:uppercase}
+  .card p{font-size:13.5px;line-height:1.55;color:var(--mut);margin:7px 0}
+  .card p b{color:var(--ink)}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:8px;margin:2px 4px 2px 0}
+  .t-good{background:var(--greenbg);color:var(--sage)}
+  .t-bad{background:var(--redbg);color:var(--red)}
+  .t-note{background:var(--amberbg);color:var(--amber)}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1.5px solid var(--stroke);border-radius:14px;overflow:hidden;font-size:12.5px}
+  th,td{padding:10px 12px;border-bottom:1px solid #F2E4D8;text-align:left;vertical-align:top;line-height:1.4}
+  th{background:#F7EFE6;font-weight:800;font-size:11.5px}
+  td:first-child{font-weight:700;white-space:nowrap}
+  .ws{background:#fff;border:1.5px solid var(--stroke);border-radius:16px;padding:22px;margin-bottom:14px}
+  .ws h3{font-size:16px;font-weight:800;margin-bottom:6px}
+  .ws p{font-size:14px;color:var(--mut);line-height:1.6}
+  .ws p b{color:var(--ink)}
+  .verdict{background:linear-gradient(180deg,#FFEDDC, #FFF4EB);border:1.5px solid var(--stroke);border-radius:20px;padding:28px;margin-top:14px}
+  .verdict h3{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px}
+  .verdict p{font-size:15px;line-height:1.65;margin:8px 0}
+  .foot{color:#9A8C7C;font-size:12px;margin-top:36px}
+</style>
+</head>
+<body>
+<h1>Competitor website scan — should we redesign, and how?</h1>
+<p class="sub">Six competitor marketing sites, desktop + mobile, observed live <b>2026-07-02</b> via Claude-in-Chrome (mobile at 390px frame emulation; Hearth mobile blocked; sticky-element behavior unverified). Purpose: ground the usecalendara.com redesign decision. Companion to the live-site inventory + v2.1 designs in calendara.pen.</p>
+
+<h2>Per-site inventory</h2>
+<div class="grid">
+  <div class="card"><h3>Cozi</h3><div class="kind">app · cozi.com · our #1 SEO cluster</div>
+    <p><b>Pitch:</b> "Get the #1 family organizer app" · CTA "Sign up – Cozi is free!"</p>
+    <p><b>Hero:</b> circular stock family photo, no product UI on desktop. Whole page ≈ 3 screens: hero → press logos (TODAY, NYT, WSJ…) → blue CTA band → footer.</p>
+    <p><b>Proof:</b> press strip; 4.8★ + 21M downloads shown <i>only on mobile</i>.</p>
+    <p><b>Aesthetic:</b> white + sky blue + orange; "2015 mom-blog utility."</p>
+    <span class="tag t-good">Ruthless brevity</span><span class="tag t-bad">Zero product demo on desktop</span><span class="tag t-note">Best proof hidden from desktop</span>
+  </div>
+  <div class="card"><h3>FamilyWall</h3><div class="kind">app · familywall.com · SEO cluster #2</div>
+    <p><b>Pitch:</b> "Happy Family Organization" · CTA "SIGN UP" / mobile "DOWNLOAD THE APP".</p>
+    <p><b>Hero:</b> full-bleed stock photo (phone over grocery cart). Then a 13-band zig-zag feature parade: dashboard, calendar, lists, budget (PREMIUM), meals, photos, location, messaging, groups…</p>
+    <p><b>Proof:</b> per-section 5★ quote cards ("Danielle Bailey – iPhone 6").</p>
+    <p><b>Aesthetic:</b> white + periwinkle + teal; "mid-2010s European family app."</p>
+    <span class="tag t-good">Every feature shown w/ real UI</span><span class="tag t-bad">No hierarchy — calendar = budget = location</span>
+  </div>
+  <div class="card"><h3>TimeTree</h3><div class="kind">app · timetreeapp.com · free rival</div>
+    <p><b>Pitch:</b> "All your plans, Together in one calendar" · CTA "Get started for free".</p>
+    <p><b>Hero:</b> large real-UI composite + flat illustrated characters on green gradient — product understood before reading. Short page; Premium <b>$4.49/mo</b> is the only visible app price of the six.</p>
+    <p><b>Proof:</b> essentially none on the homepage.</p>
+    <p><b>Aesthetic:</b> green/lime + white cards; "cheerful Japanese utility."</p>
+    <span class="tag t-good">UI-first hero with personality</span><span class="tag t-bad">Zero social proof</span><span class="tag t-note">Generic "any group" pitch — never names family pain</span>
+  </div>
+  <div class="card"><h3>Skylight</h3><div class="kind">hardware · myskylight.com · design benchmark</div>
+    <p><b>Pitch:</b> "Families In Sync Can Do Beautiful Things" · CTA "Buy Now". 7K+ 5★, "1M+ families", WSJ/Wirecutter/TODAY, Disney Mode, named-mom testimonials, trust tiles, mental-load <i>quiz</i>, live demo webinars 2×/week.</p>
+    <p><b>Threat note:</b> their AI ingestion ("Import Events — Like Magic!" — emails, paper schedules, PDFs via Sidekick) is a <b>text bullet buried mid-list on a sub-page</b>. The direct analogue of our core loop, unmarketed — for now.</p>
+    <p><b>Aesthetic:</b> cream + lavender + terracotta, serif headlines; "premium DTC home brand." Closest palette kin to us.</p>
+    <span class="tag t-good">Best conversion architecture of the six</span><span class="tag t-good">Names the mental load</span><span class="tag t-bad">Buries its own AI magic</span>
+  </div>
+  <div class="card"><h3>Hearth</h3><div class="kind">hardware · hearthdisplay.com</div>
+    <p><b>Pitch:</b> "The smart way to raise capable kids" · CTA "Shop now". Autoplay lifestyle video hero (only one of the six), 4.7★ (786), "40,000+ families", UGC videos, parenting-coach authority, founder-mom story. AI = "Hearth Helper" static chat mockup.</p>
+    <p><b>Aesthetic:</b> navy + cream + olive; "part Nike ad, part Montessori."</p>
+    <span class="tag t-good">Emotional outcome framing (capable kids)</span><span class="tag t-bad">Discount popup before value prop</span><span class="tag t-note">Calendar utility subordinated to philosophy</span>
+  </div>
+  <div class="card"><h3>Maple</h3><div class="kind">app · growmaple.com · AI validator</div>
+    <p><b>Pitch:</b> "The operating system for modern families" · CTA "Get Maple". The homepage <i>is</i> a ChatGPT-style prompt box + two suggestion chips + one anonymous 5★ quote. One viewport total.</p>
+    <p><b>Striking:</b> they shipped photo/AI ingestion in April — the homepage never shows or mentions it.</p>
+    <p><b>Aesthetic:</b> stark white, giant grotesque, pen-sketch doodles; "OpenAI landing grammar for family life."</p>
+    <span class="tag t-good">Total commitment to the AI idea</span><span class="tag t-bad">No proof, no visuals, no pricing — insiders only</span>
+  </div>
+</div>
+
+<h2>Messaging matrix</h2>
+<table>
+  <tr><th></th><th>Cozi</th><th>FamilyWall</th><th>TimeTree</th><th>Skylight</th><th>Hearth</th><th>Maple</th><th>Calendara v2.1</th></tr>
+  <tr><td>H1</td><td>"#1 family organizer app"</td><td>"Happy Family Organization"</td><td>"All your plans, together"</td><td>"Families In Sync…"</td><td>"Raise capable kids"</td><td>"OS for modern families"</td><td>"The family calendar that remembers everything"</td></tr>
+  <tr><td>Differentiator</td><td>scale/legacy</td><td>breadth</td><td>group calendars</td><td>hardware hub + syncs all</td><td>parenting science</td><td>AI prompt UI</td><td><b>photo → AI → shared (shown, not told)</b></td></tr>
+  <tr><td>Proof</td><td>press; 21M (mobile only)</td><td>quote cards</td><td>none</td><td>7K★ · 1M+ · WSJ</td><td>4.7★ · 40K+ · coach</td><td>1 anon quote</td><td>500+ families · founder story (real reviews pending)</td></tr>
+  <tr><td>Villain</td><td>juggling schedules</td><td>scattered logistics</td><td>scattered plans</td><td><b>the mental load</b></td><td>mom does everything</td><td>family chaos</td><td>mental load, <b>depicted</b> (fridge-chaos art)</td></tr>
+  <tr><td>Primary CTA</td><td>Sign up (web app)</td><td>Sign up / Download</td><td>Get started (web)</td><td>Buy Now</td><td>Shop now</td><td>Get Maple</td><td>Get the app + QR/text-me on desktop</td></tr>
+  <tr><td>Aesthetic</td><td>2015 blue utility</td><td>2010s periwinkle</td><td>green flat-vector</td><td>warm DTC serif</td><td>navy video brand</td><td>stark AI-minimal</td><td><b>warm cream/coral + painterly Glow</b></td></tr>
+</table>
+
+<h2>White space — what nobody does</h2>
+<div class="ws"><h3>1 · No animated product demo, anywhere</h3><p>Zero autoplaying UI walkthroughs across all six. Skylight outsources demos to live webinars; Maple shows an input, not an outcome; Hearth's video is brand, not UI. <b>A photo→events demo in the hero is completely unclaimed</b> — and it's our #1 differentiator (27% feature adoption; photo posts convert at 38–41%). The ai-demo-web/mobile loops are, as of today, a category first.</p></div>
+<div class="ws"><h3>2 · Nobody solves the desktop→phone handoff</h3><p>No QR, no text-me-a-link on any site. The apps dodge it with web signup (Cozi, TimeTree) — <b>we can't and never will (iOS-only, no web app)</b>, so our QR/text-me pattern isn't just parity, it's the only honest solution in the category — and 58% of our traffic needs it.</p></div>
+<div class="ws"><h3>3 · Nobody owns warm illustration</h3><p>Flat vector (TimeTree) and pen doodles (Maple) exist; painterly-emotional does not. Skylight is the only warm-palette kin and it's photography-based hardware. <b>Storybook Glow has no competitor.</b></p></div>
+<div class="ws"><h3>4 · Nobody depicts the "before"</h3><p>Every site describes the chaos villain in words; none show it. Our fridge-flyer-chaos Problem image is another unclaimed visual.</p></div>
+<div class="ws"><h3>5 · Threat clock</h3><p>Skylight's Sidekick (paper/PDF/email→events, 1M+ families) is the real feature threat, currently buried as a bullet; Maple shipped photo ingestion and doesn't market it. <b>The demo-forward window is open but should be assumed temporary.</b></p></div>
+
+<h2>What to adopt (they do it better today)</h2>
+<div class="ws"><p><b>Skylight's proof stack</b> — named testimonials with hometowns, trust tiles, counts. We can't match the numbers yet; we can match the <i>grammar</i>: real named quote (Apryl candidate), founder story (already on /about), trust tiles (private-by-design · two-way Google sync · free during Early Access). <b>Keep proof identical across breakpoints</b> (Cozi hides its best numbers from desktop — don't inherit that bug). <b>Hearth's outcome framing</b> — kid/family outcomes over features; our "Less logistics. More life." section carries this, keep it prominent. <b>Skylight's mental-load quiz</b> — strong lead-magnet + SEO idea for the photo cluster; backlog candidate, not launch-blocking. <b>TimeTree's price honesty</b> — we already shout free; keep it unmissable.</p></div>
+
+<div class="verdict">
+  <h3>Verdict: redesign confirmed — v2.1 is differentiated on every axis that matters. Build it.</h3>
+  <p><b>Should we?</b> Yes — but the scan's real finding is that this isn't a "catch up" redesign, it's a "claim the white space" redesign. The current live site competes in the same grammar as Cozi/FamilyWall (describe features, show badges). v2.1 as designed occupies four unclaimed positions at once: animated photo→AI demo (nobody), warm painterly emotional register (nobody), depicted before-chaos (nobody), honest desktop→phone handoff (nobody, and we uniquely need it).</p>
+  <p><b>How?</b> No direction change. Priorities sharpened by the scan: (1) the demo loop is the centerpiece — ship it with the blog template first, homepage second; (2) borrow Skylight's proof grammar within our truth constraints; (3) keep the outcome section loud; (4) move before Skylight markets Sidekick or Maple shows its ingestion — the window is the strategy.</p>
+  <p><b>Positioning line the matrix supports:</b> For the parent who keeps track of everything, Calendara is the family calendar that fills itself from a photo — warm where Maple is cold, honest-scale where Cozi is legacy, software-priced where Skylight is $300 hardware.</p>
+</div>
+
+<p class="foot">Sources: live site observations 2026-07-02 (Claude-in-Chrome, desktop + 390px emulation) · PostHog 90d funnel · GSC 90d · calendara.pen v2.1 frames. Companion: INVENTORY/Live-UI-Jun2026 (Pencil) — this board to be ported into calendara.pen when the Pencil connection returns.</p>
+</body>
+</html>

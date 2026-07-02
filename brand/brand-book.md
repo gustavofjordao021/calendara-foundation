@@ -3,7 +3,7 @@
 *Canonical. v3.1 tokens. Last updated by Claude. If something here is stale, tell Claude and it'll fix it.*
 
 ## What we are
-The AI-powered family calendar. Snap a photo of a flyer, schedule, or printed calendar and AI turns it into shared events, lists, and tasks — so families spend less time coordinating and more time together. iOS app (React Native) + companion web/API. Evolving toward **Hygge**, a conversational family-coordination agent.
+The AI-powered family calendar. Take a photo of a flyer, schedule, or printed calendar and AI turns it into shared events, lists, and tasks — so families spend less time coordinating and more time together. iOS app (React Native) + companion web/API. Evolving toward **Hygge**, a conversational family-coordination agent.
 
 ## Who it's for
 The household's "family manager" — the parent who carries the mental load of everyone's schedule. Modern alternative to Cozi / FamilyWall. Diverse family shapes are the default (two-parent, single-parent, co-parenting, multigenerational, blended).
@@ -11,8 +11,8 @@ The household's "family manager" — the parent who carries the mental load of e
 ## Voice & tone
 Warm, unpretentious, lightly playful. Short and concrete. We help families **coordinate**, not "optimize their lives." Avoid corporate/productivity jargon. No exclamation points unless earned.
 
-- ✅ "Snap a photo, we'll handle the rest." · "Your family's week, in one place." · "Close the app, be with them."
-- ❌ "Maximize household productivity." · "Sync your life's operating system."
+- ✅ "Take a photo, we'll handle the rest." · "Your family's week, in one place." · "Close the app, be with them."
+- ❌ "Maximize household productivity." · "Sync your life's operating system." · the word **"snap"** in any form — banned everywhere (2026-06-11); use "take a photo" / "one photo"
 
 ## Palette (v3.1 design tokens)
 Warm, earthy, hygge — coral-forward on cream. Cool tones fight it.
