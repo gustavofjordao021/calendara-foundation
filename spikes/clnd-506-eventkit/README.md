@@ -29,7 +29,7 @@ pinning) are packaged as a tap-through screen.
 
 | Probe | Answers | Expected per current evidence |
 | --- | --- | --- |
-| P4 calendars | #4 subscription detectability | subscription calendars visible with `type`, **no feed URL exposed** |
+| P4 calendars | #4 subscription detectability | subscription calendars visible with `type`, **no feed URL exposed**. ⚠️ expo-calendar exposes only the `type` string — iCloud-hosted subscriptions (e.g. "US Holidays") report `caldav`, not `subscribed`; only the native module's `isSubscribed` catches them. Note what YOUR webcal feed reports. |
 | P8 sources | #8 write-back pinning | iCloud CalDAV create OK; `.local` create disappears/never syncs while iCloud on |
 | P1 recurring | #1 identifier sharing | N occurrences, **1 distinct id** → composite key / master model required |
 | P5 lastModified | #5 self-bump semantics | own-writes bump it; the second-run diff shows whether iCloud re-syncs do too |
