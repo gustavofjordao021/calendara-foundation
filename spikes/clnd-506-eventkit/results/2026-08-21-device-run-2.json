@@ -1,0 +1,83 @@
+[
+  {
+    "title": "P4 · Calendars (subscription/birthday detectability)",
+    "lines": [
+      "Calendar | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: id, source, allowsModifications, title, entityType, color, type, allowedAvailabilities",
+      "Holidays in United States | type=caldav | source=Gmail(caldav) | writable=false",
+      "  keys: entityType, source, allowedAvailabilities, color, title, id, type, allowsModifications",
+      "gustavo.jordao021@gmail.com | type=caldav | source=Gmail(caldav) | writable=true",
+      "  keys: allowedAvailabilities, title, id, type, source, color, allowsModifications, entityType",
+      "Holidays in United States | type=caldav | source=gustavo.jordao@paynearme.com(caldav) | writable=false",
+      "  keys: id, title, source, entityType, color, allowsModifications, type, allowedAvailabilities",
+      "gustavo.jordao@paynearme.com | type=caldav | source=gustavo.jordao@paynearme.com(caldav) | writable=true",
+      "  keys: entityType, color, type, allowedAvailabilities, title, source, id, allowsModifications",
+      "Birthdays | type=birthdays | source=Other(birthdays) | writable=false",
+      "  keys: color, allowedAvailabilities, entityType, title, type, source, allowsModifications, id",
+      "Family | type=caldav | source=Gmail(caldav) | writable=true",
+      "  keys: id, allowedAvailabilities, entityType, title, type, source, color, allowsModifications",
+      "US Holidays | type=subscribed | source=Subscribed Calendars(subscribed) | writable=false",
+      "  keys: id, source, color, type, title, entityType, allowedAvailabilities, allowsModifications",
+      "Haus | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: title, allowedAvailabilities, color, id, entityType, source, type, allowsModifications",
+      "Maple | type=caldav | source=Gmail(caldav) | writable=true",
+      "  keys: id, source, title, color, allowsModifications, type, allowedAvailabilities, entityType",
+      "Family | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: source, type, allowsModifications, allowedAvailabilities, id, title, entityType, color",
+      "Calendário | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: allowedAvailabilities, color, title, id, entityType, allowsModifications, type, source",
+      "Work | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: allowedAvailabilities, id, type, source, entityType, allowsModifications, title, color",
+      "Home | type=caldav | source=iCloud(caldav) | writable=true",
+      "  keys: type, allowedAvailabilities, allowsModifications, source, title, entityType, id, color",
+      "",
+      "CHECK MANUALLY: does your old \"Calendara\" webcal subscription appear above?",
+      "If yes: note its type/source strings — that is our exclusion key."
+    ]
+  },
+  {
+    "title": "P8 · Sources + write-back pinning",
+    "lines": [
+      "source: gustavo.jordao@paynearme.com | type=caldav | id=00D28FDD-37AD-4D68-A88C-B92E042D4AF5",
+      "source: Other | type=birthdays | id=______NativeStorePersistentID_______",
+      "source: Subscribed Calendars | type=subscribed | id=D9E352BD-5CDD-48DA-A899-610F5D05B376",
+      "source: iCloud | type=caldav | id=9280793D-DB25-4459-9AC0-B07CBF520C97",
+      "source: Gmail | type=caldav | id=73B5AFEC-93B9-46BD-8A8D-679938D4C858",
+      "default calendar: Calendar | source=iCloud(caldav)",
+      "create in iCloud CalDAV: OK (id=8F78D92B-9618-4809-BFE4-14E3E3794211)",
+      "  CHECK MANUALLY: open Apple Calendar — is \"CLND506 Spike (iCloud CalDAV)\" visible? Does it survive 5 min with iCloud on?",
+      "create in local: source not present on this device"
+    ]
+  },
+  {
+    "title": "P1 · Recurring identifiers + expansion",
+    "lines": [
+      "created weekly x8 series, createEventAsync returned id=125118B9-848F-4897-A95B-CC53AA787302",
+      "range query returned 8 occurrences, 1 distinct id(s)",
+      "=> CONFIRMED: occurrences share one identifier (composite key or master model REQUIRED)",
+      "occurrence fields: calendarId, lastModifiedDate, title, recurrenceRule, startDate, isDetached, creationDate, status, alarms, availability, timeZone, endDate, id, allDay, originalStartDate",
+      "recurrenceRule readable: {\"occurrence\":8,\"interval\":1,\"frequency\":\"weekly\"}",
+      "originalStartDate: 2026-08-21T14:00:00.000Z | isDetached: false",
+      "deleted occurrence #2 via instanceStartDate → 7 occurrences remain (expect 7)"
+    ]
+  },
+  {
+    "title": "P5 · lastModifiedDate semantics",
+    "lines": [
+      "snapshotted lastModifiedDate for 354 events across 14 calendars",
+      "First run — snapshot saved. Re-run in a few hours (and after toggling iCloud sync) to diff.",
+      "own-write lastModifiedDate: created=2026-08-21T19:55:34.416Z afterEdit=2026-08-21T19:55:34.424Z"
+    ]
+  },
+  {
+    "title": "P5 · lastModifiedDate semantics",
+    "lines": [
+      "snapshotted lastModifiedDate for 353 events across 14 calendars",
+      "vs previous run: 1 events changed lastModifiedDate",
+      "If YOU did not edit those events, EventKit bumps timestamps on its own —",
+      "the LWW tolerance in CLND-514 must absorb this. List:",
+      "  75804181-BCB1-4043-816B-19A5A5722D3A@2026-08-21T20:00:00.000Z: 2026-08-21T19:07:09.000Z -> 2026-08-21T20:03:19.643Z",
+      "own-write lastModifiedDate: created=2026-08-21T20:03:37.297Z afterEdit=2026-08-21T20:03:37.305Z"
+    ]
+  }
+]
