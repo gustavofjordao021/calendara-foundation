@@ -8,7 +8,7 @@
 
 ## Decisions
 
-### MR1 · Recurring events — import as EXPANDED OCCURRENCES, composite key ✅ RESOLVED (device confirm queued)
+### MR1 · Recurring events — import as EXPANDED OCCURRENCES, composite key ✅ RESOLVED · DEVICE-CONFIRMED 2026-08-21
 
 **Decision: expanded per-occurrence import, keyed `(binding, apple_event_id, occurrence_date)` — overriding the epic's master+exceptions default.**
 
@@ -16,7 +16,7 @@ The platform decided this for us: range queries return one `EKEvent` per occurre
 
 Consequences: CLND-508's unique key = `(binding_id, apple_event_id, occurrence_date)` (occurrence_date NULL for non-recurring); store the series' readable `recurrenceRule` as metadata on occurrences for series-aware cross-provider dedup (a Google master row shares its UID with all Apple occurrences of the same series); window-slide reconciliation per CLND-512 (entering occurrences import; exiting occurrences are never deletions). Divergence from Google's post-CLND-250 master model is accepted and documented — the two providers meet at the canonical events table, not at a shared storage model.
 
-Device confirm (harness P1): N occurrences / 1 distinct id, `originalStartDate` present.
+**Device result (P1, iPhone 15 Pro / iOS 26):** weekly ×8 → 8 occurrences, **1 distinct id**; `originalStartDate`, `isDetached`, and `recurrenceRule` (`{frequency:weekly, interval:1, occurrence:8}`) all readable; single-occurrence delete via `instanceStartDate` left 7 (count correct; *which* occurrence was removed not disambiguated — the 15.0.8 resolver bug remains a reason for SDK 55, not a blocker).
 
 ### MR2 · Native module — ONE module, three capabilities + the echo guard ✅ RESOLVED
 
@@ -32,7 +32,7 @@ Plus `getCalendarNativeInfo()`: `isSubscribed` + `isImmutable` + native type —
 
 The classic risk argument is already retired: **the app ships the New Architecture on SDK 54 today** (`newArchEnabled: true`, Fabric pods in the lockfile), so 54→55 collapses to routine minor bumps + one deliberate migration (google-signin 13→16; v13 is explicitly "do not use"). Zero New-Arch blockers across all ~30 native deps (posthog-react-native is JS-only; RevenueCat 9.x supports RN 0.83; the local Expo module recompiles). Meanwhile: SDK 54 support ends ~Sept 2026; SDK 55 keeps **iOS 15.1** while shipping the new API as `expo-calendar/next`; and SDK 54's legacy expo-calendar has a **verified occurrence-resolver bug** (inverted guard in `getEvent(with:startDate:)` — `instanceStartDate` updates/deletes frequently hit the *first* occurrence; fixed in v57's modules), plus v57 fixed a nil-calendar crash a sync sweep will hit. SDK 56/57 later reduces to one product question: raising the iOS floor from 15.1 to 16.4.
 
-### MR4 · Subscription-calendar exclusion — `isSubscribed`, title heuristic, UID backstop ✅ RESOLVED (device confirm queued)
+### MR4 · Subscription-calendar exclusion — `allowsModifications=false` (JS) + `isSubscribed` (native), title heuristic, UID backstop ✅ RESOLVED · DEVICE-CONFIRMED 2026-08-21
 
 **Facts:** No public API exposes a subscribed calendar's feed URL — definitive (complete EKCalendar/EKSource property surfaces enumerated; `externalURI`/`publishURL` exist only as App-Store-rejectable private API). And the type filter is a trap: **CalDAV-hosted subscriptions (e.g. iCloud "US Holidays") report `type == .calDAV` with `isSubscribed == true`** — filtering on `.subscription` alone misses them.
 
@@ -42,9 +42,9 @@ The classic risk argument is already retired: **the app ships the New Architectu
 - **Structural backstop (always on, server-side): the MR2 UID echo guard** — works even if the user force-includes the feed calendar. This is the layer that actually protects the 18-owner webcal cohort.
 - Non-Calendara subscriptions (Holidays etc.) may be user-included: import-only is safe (read-only sources can't echo).
 
-### MR5 · lastModifiedDate semantics — ⏳ DEVICE CONFIRM (harness P5, two runs hours apart)
+### MR5 · lastModifiedDate semantics — ⏳ RUN 1 DONE 2026-08-21, RUN 2 PENDING
 
-Docs give no semantics. Design defenses regardless of outcome: the trigger-proof `apple_updated_at` baseline + `last_synced_at` + tolerance (the shipped CLND-546 pattern) absorbs self-skew; own-write bumps are measured by the harness; if iCloud re-syncs bump timestamps without edits, widen tolerance and add the (title,start) content-equality check before minting conflict rows (CLND-514's flood defenses already require dedup/suppression).
+**Device result (P5 run 1):** snapshot of 354 events across 14 calendars saved; **own writes bump `lastModifiedDate`** (create 19:55:34.416Z → edit 19:55:34.424Z) — so M2 write-back must re-baseline after its own saves (the Google PUT-response pattern). Run 2 (after an iCloud sync) decides whether untouched events drift. Docs give no semantics. Design defenses regardless of outcome: the trigger-proof `apple_updated_at` baseline + `last_synced_at` + tolerance (the shipped CLND-546 pattern) absorbs self-skew; own-write bumps are measured by the harness; if iCloud re-syncs bump timestamps without edits, widen tolerance and add the (title,start) content-equality check before minting conflict rows (CLND-514's flood defenses already require dedup/suppression).
 
 ### MR6 · Multi-device v1 — SINGLE ACTIVE BINDING DEVICE ✅ RESOLVED
 
@@ -54,9 +54,11 @@ Confirmed: `eventIdentifier`/`calendarItemIdentifier` are device-local and lossy
 
 **Decision: the phone gathers and applies; the server owns every decision.** The import payload carries raw EventKit facts (identifier tuple, occurrence_date, externalIdentifier, lastModifiedDate, isAllDay, recurrence metadata); the CLND-509 endpoint owns transform-to-canonical, all-day noon-UTC normalization, conflict decision (`apple_updated_at` vs `last_synced_at`), dedup (UID echo guard, `unique_user_event_instance`-as-signal, cross-provider), and `family_member_id` stamping. CLND-507's extracted core stays server-side only — no shared npm package, no duplicated TS port, nothing for the device to consume. This keeps the store-binary surface thin (contracts fossilize; logic shouldn't) and makes every sync rule hotfixable server-side.
 
-### MR8 · Write-back source pinning (M2) — DEFAULT SOURCE → iCLOUD → LOCAL-ONLY-IF-NO-REMOTE ✅ RESOLVED (device confirm queued)
+### MR8 · Write-back source pinning (M2) — DEFAULT SOURCE → iCLOUD → LOCAL-ONLY-IF-NO-REMOTE ✅ RESOLVED · DEVICE-CONFIRMED 2026-08-21 (visibility check pending)
 
 **Facts:** the `.local`-while-iCloud-on trap is Apple-documented (QA1926: empty local calendars are *hidden* from the Calendar app and from `calendars(for:)` — the "silently disappears" failure is real). Creating calendars in a **Google CalDAV source fails structurally** (Google's CalDAV endpoint doesn't support `MKCALENDAR`) and Exchange creation is unsupported — so the feared "silent CalDAV echo via calendar creation" mostly manifests as a *creation failure*, which we must catch with fallback UX. iCloud source detection by title is user-editable-fragile → cache `sourceIdentifier` after first resolution.
+
+**Device result (P8):** default calendar source = iCloud (caldav); `createCalendarAsync` in the iCloud source succeeded; **the `.local` source is not present at all while iCloud Calendar is on** (QA1926 in its strongest form — the fallback branch is only reachable on no-iCloud devices). Sources seen: iCloud, Gmail (caldav), a Google Workspace account (caldav), Subscribed Calendars, Birthdays (whose source id is a placeholder string — never key on it). Pending: manual confirmation that the iCloud-created calendar is visible in Apple Calendar.
 
 **Decision chain (CLND-513):** `defaultCalendarForNewEvents.source` if iCloud/local → CalDAV source titled "iCloud" → `.local` **only when no remote calendar account is active** → else explicit "no writable home for the Calendara calendar" UX. Cache source + title for adopt-don't-recreate.
 
@@ -79,9 +81,9 @@ Confirmed: `eventIdentifier`/`calendarItemIdentifier` are device-local and lossy
 | CLND-515 | Rescope language to best-effort; native BGAppRefreshTask via CalendaraEventKit |
 | NEW | SDK 55 upgrade ticket precedes CLND-511/512 (small, well-trodden; google-signin 13→16 is the one real migration) |
 
-## Still open (device run, ~15 min — `harness/README.md`)
+## Still open
 
-1. P1: occurrence-identifier sharing + `originalStartDate` presence (expected: confirmed)
-2. P5 ×2 runs: does `lastModifiedDate` bump without user edits?
-3. P8: source-creation chain behavior on a real iCloud-signed-in device
-4. P4: what the legacy Calendara webcal subscription actually exposes on-device
+1. P5 run 2 (hours after run 1 / after an iCloud sync): do untouched events' `lastModifiedDate` values drift?
+2. P8 manual: is "CLND506 Spike (iCloud CalDAV)" visible in Apple Calendar, and does it persist?
+
+Raw device results: `results/2026-08-21-device-run-1.json`.
