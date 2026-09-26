@@ -1,8 +1,10 @@
-# Calendara — shared conventions (CalendaraMobile + calendara-main)
+# Calendara — shared conventions (calendara-ios + calendara-main)
 
-This file lives in the common parent of the Calendara repos and is **auto-loaded by Claude Code in both** `CalendaraMobile/` (Expo mobile app) and `calendara-main/` (Next.js web app + API + the Google-sync engine, deployed on Vercel). Claude Code walks up the directory tree from the cwd, so anything here applies when working in either repo.
+This file lives in the common parent of the Calendara repos and is **auto-loaded by Claude Code in both** `calendara-ios/` (Expo mobile app; `CalendaraMobile/` is a retired copy — do not edit it) and `calendara-main/` (Next.js web app + API + the Google-sync engine, deployed on Vercel). Claude Code walks up the directory tree from the cwd, so anything here applies when working in either repo.
 
 Put **cross-repo** conventions here so they live in one place; keep repo-specific guidance in each repo's own `CLAUDE.md`.
+
+**Cloud sessions never see this file.** A cloud session (claude.ai/code, the mobile app, `claude --cloud`, routines) clones one repo, not this parent folder. So this file is mirrored verbatim into both repos as `.claude/rules/calendara-shared-conventions.md`, alongside the `/build` and `/spec` skills and the `executor` agent. **After editing this file, run `node scripts/sync-agent-config.mjs` in calendara-main and commit the mirrors in both repos.** Locally, `claudeMdExcludes` in `~/.claude/settings.json` skips the mirrors under this folder, so these rules don't load twice.
 
 ## Always pair technical detail with user-facing impact
 
@@ -22,7 +24,7 @@ This applies everywhere we communicate change: TL;DRs, PR and commit description
 When explaining how a system works — backend/API changes, data/schema investigations, the Google-sync engine, or the findings of a multi-agent `workflow` — the communication artifact is a **`visual-explainer` "how it works" HTML report**, not prose or ASCII tables. This is the non-UI counterpart to the mobile repo's `ui-fidelity-review` flow: where UI work aligns on a screenshot-vs-design comparison, system work aligns on a "how it works + is it correct" explainer.
 
 - **What it contains:** end-to-end current behavior; Mermaid architecture/sequence/flow diagrams; **live supporting data embedded as real tables** (actual SQL results / `file:line`, never prose-only or guessed); a per-behavior **"is this correct?"** verdict; and an appendix of candidate tickets. Ground every claim in a query you actually ran or a `file:line` you read. Write reports to `~/.agent/diagrams/` (self-contained, shareable). Use the `visual-explainer` skill.
-- **Exemplar:** the Google-sync investigation — `~/.agent/diagrams/calendara-gcal-sync.html` (text source `CalendaraMobile/gcal-sync-investigation.md`), which became epic **CLND-299**.
+- **Exemplar:** the Google-sync investigation — `~/.agent/diagrams/calendara-gcal-sync.html` (text source `calendara-ios/gcal-sync-investigation.md`), which became epic **CLND-299**.
 - **When to produce one:** explaining how a backend/data system works, diagnosing a data issue's root cause, designing a backend feature — and **always as the deliverable of a `workflow`-driven investigation.**
 - **`/spec` on a backend/data/workflow ticket:** the "How it works / current state" section must be (or link to) a `visual-explainer` report, so reviewers align on current behavior before the change is scoped — the analogue of naming `ui-fidelity-review` as the gate for UI specs.
 - **`/build` on backend/data/workflow changes:** in Phase 5 (Verify), generate a `visual-explainer` "how it works now" (or before/after) report for the touched system instead of relying on a text summary — the analogue of running `ui-fidelity-review` on touched screens.
@@ -31,7 +33,7 @@ When explaining how a system works — backend/API changes, data/schema investig
 
 `calendara.pen` (Pencil) is the **design source of truth**. Whenever a UI/design decision is **made or changed in code** — a deliberate deviation, a refinement, or the resolution of a design-vs-code discrepancy — go back to Pencil and update the matching component/frame so the two never drift.
 
-- **Applies to every UI surface in `calendara.pen` — mobile AND website:** the **mobile app** (`CalendaraMobile`, `NEW/*` screen frames) and the **website** (`calendara-main`, `NEW/Landing-*` frames + the `(public)/` marketing routes / `components/landing-page/`). Both repos auto-load this file, so the rule holds in either.
+- **Applies to every UI surface in `calendara.pen` — mobile AND website:** the **mobile app** (`calendara-ios`, `NEW/*` screen frames) and the **website** (`calendara-main`, `NEW/Landing-*` frames + the `(paperline)/` marketing routes / `src/components/landing-page/`). Both repos auto-load this file, so the rule holds in either.
 - **Bidirectional fidelity:** the build-vs-design gate aligns build → design (mobile: `ui-fidelity-review`, sim-vs-Pencil; web: a `claude-in-chrome` screenshot of the running page vs the exported Pencil `Landing-*` frame); the back-port closes the loop design → shipped (the frames match what actually shipped). Both directions must hold before a UI ticket is Done.
 - **When:** as the closing step of the work — `/build` Phase 5 (Verify), after the fidelity gate passes — and any time a `/spec` decision overrides the design (font, label, variant, layout, copy).
 - **How:** use the `pencil` MCP (`batch_get` to re-read, `batch_design` to edit, `export_nodes`/`get_screenshot` to compare). The .pen is multiplayer — **re-read nodes first and update them in place; never recreate frames.** Screenshot the reconciled nodes and attach them to the ticket.
@@ -42,6 +44,15 @@ When explaining how a system works — backend/API changes, data/schema investig
 These apply to **all** user-facing copy in **both repos** (the mobile app and the website) and **override the source design** (Pencil/Figma) when they conflict.
 
 - **Never use the word "Snap."** Always use **"Take a photo"** (or a context-appropriate equivalent like "Add a photo"). "Snap" reads as slangy and off-brand — this is absolute. Applies to onboarding, button labels, tip cards, banners, share-sheet text, AND marketing/website surfaces. Search new/changed copy for "snap" before shipping, and back-port the fix into the matching Pencil frame (see the back-port rule above). Exemplar: `Kit/AI-CTA-Banner` sub-copy "Take a photo or paste it in" (CLND-391/393); CLND-367 aLuJP.
+
+## App icon — one source of truth
+
+`calendara-ios/assets/icon.png` (the `app.config.js` `icon`, 1024×1024, opaque, full-bleed) **is** the Calendara app icon. Never hand-draw a stand-in tile (a glyph on a gradient) wherever a surface presents "the app".
+
+- **Website:** render it only through `<AppIcon>` (`calendara-main/src/components/brand/app-icon.tsx`). When the iOS icon changes, run `node scripts/sync-app-icon.mjs` in calendara-main. It re-derives `public/assets/app-icon/*`, `apple-touch-icon.png`, the favicons, the brand lockups (`calendara_logoAndName_{dark,white}.{png,webp}`, squircle mark + the wordmark from `scripts/brand-src/`) and `og-image.png`. It also re-pins `APP_ICON_SOURCE_MD5`, which busts the year-long favicon cache via `?v=`.
+- **Pencil:** use the `Kit/App-Icon` component in `calendara-marketing.pen`, and update its image fill (`assets/app-icon-1024.png`) at the same time.
+- **Mobile:** `src/components/ui/AppIcon.tsx` (CLND-368) reads the same file directly.
+- **Why:** CLND-826. The website's sticky download bar shipped a sparkle tile as "the app icon", and the favicons kept a pre-June crop for months.
 
 ## Migration backup / audit tables (RLS + tracking)
 
