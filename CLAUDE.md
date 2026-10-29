@@ -29,61 +29,45 @@ When explaining how a system works — backend/API changes, data/schema investig
 - **`/spec` on a backend/data/workflow ticket:** the "How it works / current state" section must be (or link to) a `visual-explainer` report, so reviewers align on current behavior before the change is scoped — the analogue of naming `ui-fidelity-review` as the gate for UI specs.
 - **`/build` on backend/data/workflow changes:** in Phase 5 (Verify), generate a `visual-explainer` "how it works now" (or before/after) report for the touched system instead of relying on a text summary — the analogue of running `ui-fidelity-review` on touched screens.
 
-## Design lives on Claude canvases — copy every approved round to Drive
+## Keep design and code in sync — design in Pencil, back-port every decision
 
-Since 2026-10-28, all new design work happens on **Claude canvases**: claude.ai Artifacts of type "Design", with artboards as `.dc.html` files on a canvas. **Pencil is frozen** (owner decision, no pen.dev subscription). `calendara.pen` and `calendara-marketing.pen` are a read-only archive, and agents can't reach them: the `pencil` MCP is removed and `mcp__pencil` is denied. The **permanent copy** of every design is the owner's Google Drive folder `My Drive/Digital/Calendara/Design/`, synced on the Mac under `~/Library/CloudStorage/GoogleDrive-<account>/`. **Read its `INDEX.md` first** to find any design.
+Pencil (pen.dev) is the **design source of truth**. The Claude-canvas experiment of 2026-10-28 ended on 2026-10-29 (owner decision: this is an existing project, so design stays in Pencil). Every new design and every back-port happens in Pencil.
 
-- **Never re-enable Pencil yourself.** Don't run `claude mcp add pencil`, and don't edit `~/.claude/settings.json` (including the `mcp__pencil` deny entry). Only the owner does that, by hand, on export day. If a task seems to need Pencil, stop and ask the owner.
-- **Applies to every UI surface, mobile AND website:** the mobile app (`calendara-ios`) and the website (`calendara-main`: the `(paperline)/` marketing routes and `src/components/landing-page/`). Both repos auto-load this file.
-- **Design first:** on a UI ticket the first deliverable is canvas boards, not a PR.
-  - Put each proposal beside a board of today's screen. Name boards `<ticket> · TODAY|PROPOSAL|OPTION X|SHIPPED · <what>`, e.g. `972 · OPTION A · family line folded into the block`.
-  - Each round is a page. Record approval status in the page name and in the `INDEX.md` Status column.
-  - Get the owner's explicit approval before writing code.
-  - Name each canvas `CLND-xxx <topic>`, one per ticket or area.
-- **Boards show test data only.** Use the fixture family (the Bennetts) and never real users' names, emails, photos or children's details. Never show invite, magic-link, dev-auth or calendar-subscribe URLs, tokens or keys. Crop or redact before uploading a screenshot.
-- **Sizes:** phone boards are **402×874** (iPhone 17 Pro, the simulator rig), plus **375×667** (iPhone SE) when the layout is tight. Set `w` and `h` explicitly in `canvas.json`; these sizes override the Design type's 390×844 default. Web pages are fluid artboards, 1280–1440 wide.
-  - Boards at other sizes, such as 390×844, are legacy: compare them by content with the iPhone 17 Pro simulator.
-  - App Store screenshots stay on their existing exact-size PNG masters: canvas export offers only 0.5×, 1×, 2× and 4×, with no 3×.
+- **Which file:**
+  - `calendara.pen`: the mobile app (`calendara-ios`; `NEW/*` screen frames, `Kit/*` components).
+  - `calendara-marketing.pen`: the website (`calendara-main`; `§ 02 · WEBSITE — PAGES`, the `NEW/Landing-*` frames, the `(paperline)/` marketing routes and `src/components/landing-page/`), the App Store screenshot sets and the emails.
+  - Both repos auto-load this file, so the rule holds in either.
+- **Design first:** on a UI ticket the first deliverable is Pencil frames, not a PR.
+  - Read the existing frames first. Build each proposal as a **copy of the closest real frame**, placed beside the original and named `PROPOSAL · <original name> (CLND-xxx) — not approved`.
+  - Get the owner's explicit approval before writing code. On approval, archive the old frames first, then update the official frames in place.
+  - Frames show test data only: the fixture family (the Bennetts). Never real users' names, emails, photos or children's details, and never invite, magic-link, dev-auth or calendar-subscribe URLs, tokens or keys.
 - **Bidirectional fidelity:**
-  - **Build → design gate.** Mobile runs `ui-fidelity-review`: simulator screenshots against the approved boards. Web uses a `claude-in-chrome` screenshot of the running page against the canvas web-page board. PASS = zero major.
-  - Exporting or screenshotting a board for this gate is the gate itself, so the Design type's "never verify" authoring rule doesn't apply to it.
-  - **Design → shipped back-port.** When code makes or changes a design decision (a deviation, a refinement, a copy or layout fix, a `/spec` override), update the board, or add a `SHIPPED · …` board, so the approved design matches what shipped.
-  - **A screen with no canvas board yet** (designed before the freeze) is gated against its archived Pencil PNG, which exists only after export day. Until then, use a `TODAY` board made from a simulator screenshot, or ask the owner to export the frame by hand. Back-port by adding a `SHIPPED` board to the ticket's canvas; create the canvas if there isn't one.
-  - Both directions must hold, and the Drive copy must be current, before a UI ticket is Done.
-- **Copy to Drive (not optional):** canvases have no version history and no stated retention, and a republish overwrites them.
-  - **When:** after every approved round, and before the ticket is marked Done.
-  - **Where:** `Design/canvases/<date>_<tickets>-<name>/`, where `<date>` is the day the canvas was created. A later round goes into the same folder: find it in `INDEX.md`.
-  - **Steps:**
-    1. Artifact `list` the canvas files and assets, and record the version it reports.
-    2. `read` every `project/**` file (up to 256 paths per call), then read each asset by its id, one call each.
-    3. List again at the end. If the version changed, re-read whatever changed and note it in `meta.json` as `versionNote`.
-    4. Check assets against the sha256 in the assets listing, and project files against the bytes in the files listing.
-    5. After copying, run `shasum -a 256` on the Drive files.
-    6. Write `blobs.json` (which board uses which image), then write `meta.json` and `INDEX.md` last, so a folder without `meta.json` is known to be partial. Use the same `meta.json` keys as the existing copies.
-  - **Only add or replace inside `Design/`.** Never delete or move a canvas copy, `INDEX.md` or `pencil-archive/` without the owner. If a new copy has fewer files or boards than its `meta.json` records, stop and ask.
+  - **Build → design gate.** Mobile: `ui-fidelity-review` (simulator vs exported Pencil frames). Web: a `claude-in-chrome` screenshot of the running page vs the exported `Landing-*` or page frame. PASS = zero major.
+  - **Design → shipped back-port.** When code makes or changes a design decision (a deviation, a refinement, a design-vs-code fix, or a `/spec` override of font, label, variant, layout or copy), update the matching Pencil frame so the frames match what shipped.
+  - Both directions must hold before a UI ticket is Done. Do the back-port as the closing step of the work (`/build` Phase 5, after the fidelity gate passes).
+- **How:**
+  - Use the `pencil` MCP (`mcp__pencil__execute`, with `filePath` on every call). It acts on whichever .pen is open in Pen, so prove the target first with a `Get` on a node you know.
+  - The .pen is multiplayer: **re-read nodes first and update them in place; never recreate frames.** Build new UI by `Copy`-ing an existing node rather than `Insert`. The memory note `hub-pencil` lists the API quirks.
+  - Back up the .pen to the scratchpad before a large edit. Saving is File > Save in Pen, done by the owner.
+  - Export or screenshot the changed frames and attach them to the ticket.
+- **Backups:** the Drive folder `My Drive/Digital/Calendara/Design/` holds a write-once copy of the .pen files (`_freeze-2026-10-28/`) and the Oct 26–29 canvas experiments (`canvases/`, `INDEX.md`).
   - **Never edit, rename, move or delete anything in a `Design/_freeze-*` folder.** Drive mirrors deletions and keeps old versions only about 30 days.
-  - **Never put designs in the public `calendara-foundation` repo.**
-- **References:**
-  - Linear tickets carry one line: `Design: <canvas URL> · board <File.dc.html> · copy Design/canvases/<folder>/`.
-  - Board file names are permanent once referenced; titles may change.
-  - Old Pencil frame ids in code, tests and tickets resolve through `Design/pencil-archive/manifest.json` (after the one-time export day) or the owner opening Pencil by hand.
-- **Cloud sessions** can edit canvases (the Artifact tool), but they can't see the Drive folder.
-  - Do the board back-port in the cloud when it needs no simulator screenshot.
-  - Mark the Drive copy and the `INDEX.md` update **PENDING (local)**, and post the Linear `Design:` line with `copy: PENDING (local)`.
-  - Never mark the ticket Done while a copy is owed.
+  - Never put designs in the public `calendara-foundation` repo.
+- **Cloud sessions** have no Pencil: mark the back-port **PENDING (local)**, never skip it.
+- **Exemplars:** CLND-256, CLND-269, CLND-368 (D11: `Inter`→`Manrope`, Hybrid labels, realign `tBBpj`/`ngdAi` to shipped variants).
 
 ## User-facing copy conventions
 
-These apply to **all** user-facing copy in **both repos** (the mobile app and the website) and **override the source design** (the canvas board, or an archived Pencil/Figma frame) when they conflict.
+These apply to **all** user-facing copy in **both repos** (the mobile app and the website) and **override the source design** (Pencil/Figma) when they conflict.
 
-- **Never use the word "Snap."** Always use **"Take a photo"** (or a context-appropriate equivalent like "Add a photo"). "Snap" reads as slangy and off-brand — this is absolute. Applies to onboarding, button labels, tip cards, banners, share-sheet text, AND marketing/website surfaces. Search new/changed copy for "snap" before shipping, and back-port the fix into the matching canvas board, or a `SHIPPED` board for a screen that has none (see the design rule above). Exemplar: `Kit/AI-CTA-Banner` sub-copy "Take a photo or paste it in" (CLND-391/393); CLND-367 aLuJP.
+- **Never use the word "Snap."** Always use **"Take a photo"** (or a context-appropriate equivalent like "Add a photo"). "Snap" reads as slangy and off-brand — this is absolute. Applies to onboarding, button labels, tip cards, banners, share-sheet text, AND marketing/website surfaces. Search new/changed copy for "snap" before shipping, and back-port the fix into the matching Pencil frame (see the design rule above). Exemplar: `Kit/AI-CTA-Banner` sub-copy "Take a photo or paste it in" (CLND-391/393); CLND-367 aLuJP.
 
 ## App icon — one source of truth
 
 `calendara-ios/assets/icon.png` (the `app.config.js` `icon`, 1024×1024, opaque, full-bleed) **is** the Calendara app icon. Never hand-draw a stand-in tile (a glyph on a gradient) wherever a surface presents "the app".
 
 - **Website:** render it only through `<AppIcon>` (`calendara-main/src/components/brand/app-icon.tsx`). When the iOS icon changes, run `node scripts/sync-app-icon.mjs` in calendara-main. It re-derives `public/assets/app-icon/*`, `apple-touch-icon.png`, the favicons, the brand lockups (`calendara_logoAndName_{dark,white}.{png,webp}`, squircle mark + the wordmark from `scripts/brand-src/`) and `og-image.png`. It also re-pins `APP_ICON_SOURCE_MD5`, which busts the year-long favicon cache via `?v=`.
-- **Canvas:** upload `calendara-ios/assets/icon.png` itself as an image on any board that shows the app; never redraw it. When the icon changes, re-upload it to every canvas that shows it. The frozen Pencil `Kit/App-Icon` is history only.
+- **Pencil:** use the `Kit/App-Icon` component in `calendara-marketing.pen`, and update its image fill (`assets/app-icon-1024.png`) at the same time. On any frame that shows the app, use that component; never redraw the icon.
 - **Mobile:** `src/components/ui/AppIcon.tsx` (CLND-368) reads the same file directly.
 - **Email:** email art lives in `calendara-main/public/assets/email/v<N>/` and is never overwritten, so an email already delivered keeps the look it arrived with. When the icon or wordmark changes, run `node scripts/build-email-assets.mjs` to publish the next version folder and point `src/lib/emails/components/assets.ts` at it; `sync-app-icon.mjs` does not do this.
 - **Why:** CLND-826. The website's sticky download bar shipped a sparkle tile as "the app icon", and the favicons kept a pre-June crop for months.
