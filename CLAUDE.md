@@ -34,19 +34,19 @@ When explaining how a system works — backend/API changes, data/schema investig
 Pencil (pen.dev) is the **design source of truth**. The Claude-canvas experiment of 2026-10-28 ended on 2026-10-29 (owner decision: this is an existing project, so design stays in Pencil). Every new design and every back-port happens in Pencil.
 
 - **Which file:**
-  - `calendara.pen`: the mobile app (`calendara-ios`; `NEW/*` screen frames, `Kit/*` components).
-  - `calendara-marketing.pen`: the website (`calendara-main`; `§ 02 · WEBSITE — PAGES`, the `NEW/Landing-*` frames, the `(paperline)/` marketing routes and `src/components/landing-page/`), the App Store screenshot sets and the emails.
+  - `calendara.pen`: the mobile app (`calendara-ios`). Screens are named by area (`Family/…`, `Cal/…`, `Lists/…`, `AI/…`, `Onb/…`, `Settings/…`) in columns under `Label · <AREA>` frames, with `Kit/*` components and an `Archive/…` row. There are no `NEW/*` frames in this file.
+  - `calendara-marketing.pen`: the website (`calendara-main`; `§ 02 · WEBSITE — PAGES` holds a desktop and mobile frame per page, such as `NEW/Landing-v3-*`, `NEW/Features-*` and `NEW/Blog-Post-*`, for the `(paperline)/` marketing routes and `src/components/landing-page/`), the App Store screenshot sets (`§ 06`, other sizes in `§ 06b`) and the emails (`§ 10`).
   - Both repos auto-load this file, so the rule holds in either.
 - **Design first:** on a UI ticket the first deliverable is Pencil frames, not a PR.
   - Read the existing frames first. Build each proposal as a **copy of the closest real frame**, placed beside the original and named `PROPOSAL · <original name> (CLND-xxx) — not approved`.
   - Get the owner's explicit approval before writing code. On approval, archive the old frames first, then update the official frames in place.
-  - Frames show test data only: the fixture family (the Bennetts). Never real users' names, emails, photos or children's details, and never invite, magic-link, dev-auth or calendar-subscribe URLs, tokens or keys.
+  - New frames show test data only: the fictional Bennett family (Maya, Sam, Noah, Lily). Many older `calendara.pen` screens show the Jordão test names, which mirror the founders' real family; never copy those into website, store or social frames. Never real users' names, emails, photos or children's details, and never invite, magic-link, dev-auth or calendar-subscribe URLs, tokens or keys.
 - **Bidirectional fidelity:**
   - **Build → design gate.** Mobile: `ui-fidelity-review` (simulator vs exported Pencil frames). Web: a `claude-in-chrome` screenshot of the running page vs the exported `Landing-*` or page frame. PASS = zero major.
   - **Design → shipped back-port.** When code makes or changes a design decision (a deviation, a refinement, a design-vs-code fix, or a `/spec` override of font, label, variant, layout or copy), update the matching Pencil frame so the frames match what shipped.
   - Both directions must hold before a UI ticket is Done. Do the back-port as the closing step of the work (`/build` Phase 5, after the fidelity gate passes).
 - **How:**
-  - Use the `pencil` MCP (`mcp__pencil__execute`, with `filePath` on every call). It acts on whichever .pen is open in Pen, so prove the target first with a `Get` on a node you know.
+  - Use the `pencil` MCP (`mcp__pencil__execute`, with `filePath` on every call). The file must be open in Pen (`open -g -a Pen <path>` opens a second one): a call that names a file that isn't open silently runs against the one that is. Prove the target first with a `Get` on a node you know.
   - The .pen is multiplayer: **re-read nodes first and update them in place; never recreate frames.** Build new UI by `Copy`-ing an existing node rather than `Insert`. The memory note `hub-pencil` lists the API quirks.
   - Back up the .pen to the scratchpad before a large edit. Saving is File > Save in Pen, done by the owner.
   - Export or screenshot the changed frames and attach them to the ticket.
