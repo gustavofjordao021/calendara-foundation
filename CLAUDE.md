@@ -13,7 +13,7 @@ Every explanation of a bug, error, log finding, investigation result, or code ch
 1. **The technical mechanism** — what's happening and where (`file:line`, table, query, root cause).
 2. **The user-facing impact** — what an end user actually experiences, in plain UX language, with a **concrete example** (a persona doing a real action and what they see/feel).
 
-This applies everywhere we communicate change: TL;DRs, PR and commit descriptions, Linear tickets, `visual-explainer` reports, and `/build` / `/spec` output. A purely technical writeup is incomplete here — translate it.
+This applies everywhere we communicate change: TL;DRs, PR and commit descriptions, tickets, `visual-explainer` reports, and `/build` / `/spec` output. A purely technical writeup is incomplete here — translate it.
 
 - **Format:** a short "What the user feels" line/block beside the technical one. Example: *"The broken trigger means a coach who shares the team practice calendar with 15 parents sees '0 opens' forever, even as all 15 subscribe and refresh it daily."*
 - **No user impact? Say so.** If a change is operator / analytics / infra-only with zero end-user effect, state that explicitly ("no user-facing impact — analytics-only") rather than leaving it out. The reader should never have to infer the UX consequence.
