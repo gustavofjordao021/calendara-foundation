@@ -80,6 +80,27 @@ One-shot cleanup/backfill migrations often snapshot rows into a backup or audit 
 2. **Create it via a tracked migration, never raw `execute_sql`.** Untracked DDL skips review and never lands in `supabase_migrations.schema_migrations` — exactly how the RLS-off backups (and the broken `calendar_shares` trigger in CLND-205) shipped unnoticed.
 3. **Drop it when its parent ticket closes.** A backup/audit table is rollback insurance for one migration; once that work is Done + verified, drop it via a tracked `DROP TABLE IF EXISTS` migration (export to a non-repo file first if there's no PITR) — don't let PII linger.
 
+## State that changes
+
+Every confirmed state bug in the 2026-11-07 audit (CLND-1052) had one of two shapes. On the server, a status was written from several places without checking its current value. On mobile, a screen's step was set from many places. Two rules prevent them.
+
+**Server: guarded writes for shared state.** When a column can be written by more than one actor (a cron tick, a webhook, a user request, another run of the same job), write it with a compare-and-set: `updateIfUnchanged` in `calendara-main/src/lib/services/guarded-update.ts`.
+- The WHERE clause carries the value you read or own.
+- Rows affected are counted, never assumed.
+- Handle every outcome. `conflict` means someone else got there first: skip, re-read, or log, but never report success. `unknown` (0 rows after a retry) means our own write may have landed.
+- Simple filters only (`eq` / `is`). Never `or=` together with RETURNING (PostgREST #3707). Count with `{ count: 'exact' }`.
+- Exemplars: `releaseSyncLease` (the helper's reference caller), `tryAcquireSyncLease` (`google-sync-lock.ts`), `updateGuardedByEventOrder` (RevenueCat `last_event_at`, `subscription-write.ts`), and the `email_status` transition rules (`resend-webhook-service.ts`).
+- Not needed for a row only one writer touches, or for an insert protected by a unique key (use upsert, and treat 23505 as handled).
+
+**Mobile: one transition function for multi-step flows.** A flow with 4+ steps, or whose step is set from more than one place, keeps its step in a typed `useReducer`.
+- One pure `transition(state, event)` decides the next step, and it has unit tests.
+- Background inputs (cache notifies, app focus, deep links, timers) dispatch events. The reducer may ignore an event in the wrong step. Background inputs never call `setStep` or `setStatus` directly.
+- Not for small forms, toggles or a single loading flag; those stay `useState`. A value derived during render from other state, such as RootNavigator's phase, is not a step, and this rule doesn't cover it.
+- No state-machine library (xstate or similar).
+
+- **What the user feels:** fewer "my edit vanished", "stuck spinner" and "it put me back on the wrong step" bugs.
+- **Why:** CLND-1052. Fixing these one by one kept producing the same bug in the next screen or job.
+
 ## iOS Simulators — clean up after yourself
 
 Every session that touches the simulator must leave the Mac the way it found it. Booted simulators, Simulator.app and stray dev servers keep eating RAM long after the task ends.
